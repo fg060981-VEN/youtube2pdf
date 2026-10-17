@@ -1,4 +1,4 @@
-const CACHE = 'ytb2pdf-v9';
+const CACHE = 'ytb2pdf-v10';
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'logo.png', 'caricatura.png',
   'icon-192.png', 'icon-180.png', 'icon-512.png'];
 
@@ -17,6 +17,6 @@ self.addEventListener('fetch', e => {
       const copy = r.clone();
       caches.open(CACHE).then(c => c.put(e.request, copy));
       return r;
-    }).catch(() => caches.match(e.request))
+    }).catch(() => caches.match(e.request, { ignoreSearch: true }))
   );
 });

@@ -985,8 +985,22 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     };
     $('btnInstallClose').onclick = () => $('dlgInstall').close();
 
+    // ── Recibir enlace compartido (Android: Compartir → ytb2pdf; iPhone: atajo con ?url=) ──
+    function sharedYoutubeUrl() {
+      try {
+        const raw = decodeURIComponent(location.search.replace(/\+/g, ' '));
+        const m = raw.match(/https?:\/\/(?:www\.|m\.|music\.)?(?:youtube\.com|youtu\.be)\/[^\s"'<>]+/i);
+        return m ? m[0] : '';
+      } catch { return ''; }
+    }
+    const shared = sharedYoutubeUrl();
+    if (location.search) { try { history.replaceState(null, '', location.pathname); } catch {} }
+
     refreshBanner();
-    if (!getKey()) openDialog();
+    if (shared) {
+      $('urlInput').value = shared;
+      if (getKey()) getTranscript(); else openDialog();
+    } else if (!getKey()) openDialog();
 
     if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
       navigator.serviceWorker.register('sw.js').catch(() => {});
